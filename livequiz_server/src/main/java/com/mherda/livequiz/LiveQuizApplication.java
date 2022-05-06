@@ -25,7 +25,6 @@ public class LiveQuizApplication {
         SpringApplication.run(LiveQuizApplication.class, args);
     }
 
-
 }
 
 @Component
@@ -38,20 +37,20 @@ class MyRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        var first = generateAndPersist("Pytanie pierwsze");
-        generateAndPersist("Pytanie drugie");
-        generateAndPersist("Pytanie trzecie");
+        var first = generateAndPersistQuestion("Pytanie pierwsze");
+        generateAndPersistQuestion("Pytanie drugie");
+        generateAndPersistQuestion("Pytanie trzecie");
 
         var votingSession = VotingSession.builder()
                 .sessionState(SessionState.OPEN)
                 .startDate(LocalDateTime.now())
                 .question(first)
-                .result(first.getAvailableAnswers().stream().collect(Collectors.toMap(Function.identity(), item -> 0L)))
+                .result(first.getAvailableAnswers().stream().collect(Collectors.toMap(Function.identity(), item -> item.getId() + 5)))
                 .build();
         votingSessionRepository.save(votingSession);
     }
 
-    private Question generateAndPersist(String content) {
+    private Question generateAndPersistQuestion(String content) {
         var question = generateQuestion(content);
         questionRepository.save(question);
         question.getAvailableAnswers().forEach(answer -> answer.setQuestion(question));

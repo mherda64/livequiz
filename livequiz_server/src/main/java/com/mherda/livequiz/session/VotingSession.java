@@ -31,7 +31,7 @@ public class VotingSession {
     @ManyToOne
     private Question question;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "voting_session_answer_mapping",
         joinColumns = {@JoinColumn(name = "voting_session_id", referencedColumnName = "id")}
     )
