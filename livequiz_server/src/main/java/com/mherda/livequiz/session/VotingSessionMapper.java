@@ -1,6 +1,5 @@
 package com.mherda.livequiz.session;
 
-import com.mherda.livequiz.answer.AnswerMapper;
 import com.mherda.livequiz.question.QuestionMapper;
 import com.mherda.livequiz.session.dto.VotingSessionResponse;
 import lombok.AccessLevel;
@@ -18,7 +17,7 @@ public class VotingSessionMapper {
                 votingSession.getSessionState(),
                 QuestionMapper.toDto(votingSession.getQuestion()),
                 votingSession.getResult().entrySet().stream()
-                        .collect(Collectors.toMap(entry -> AnswerMapper.toDto(entry.getKey()), Map.Entry::getValue))
+                        .collect(Collectors.toMap(entry -> entry.getKey().getId(), Map.Entry::getValue))
         );
     }
 }

@@ -1,4 +1,4 @@
-package com.mherda.livequiz.session;
+package com.example.livequiz.session;
 
 public enum SessionState {
     CLOSED,

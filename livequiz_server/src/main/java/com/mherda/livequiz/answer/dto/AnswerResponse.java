@@ -2,7 +2,6 @@ package com.mherda.livequiz.answer.dto;
 
 public record AnswerResponse(
         Long id,
-        String content,
-        Boolean isCorrect
+        String content
 ) {
 }

@@ -1,6 +1,5 @@
 package com.mherda.livequiz.session.dto;
 
-import com.mherda.livequiz.answer.dto.AnswerResponse;
 import com.mherda.livequiz.question.dto.QuestionResponse;
 import com.mherda.livequiz.session.SessionState;
 
@@ -12,6 +11,6 @@ public record VotingSessionResponse(
         LocalDateTime startDate,
         SessionState sessionState,
         QuestionResponse question,
-        Map<AnswerResponse, Long> result
+        Map<Long, Long> result
 ) {
 }

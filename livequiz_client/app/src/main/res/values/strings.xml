@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">livequiz</string>
+    <string name="session">Session status: </string>
+    <string name="startDate">Start date: </string>
+    <string name="baseAddress">http://10.0.2.2:8080/</string>
+</resources>

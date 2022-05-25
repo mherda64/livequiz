@@ -9,8 +9,7 @@ public class AnswerMapper {
     public static AnswerResponse toDto(Answer answer) {
         return new AnswerResponse(
                 answer.getId(),
-                answer.getContent(),
-                answer.isCorrect()
+                answer.getContent()
         );
     }
 }

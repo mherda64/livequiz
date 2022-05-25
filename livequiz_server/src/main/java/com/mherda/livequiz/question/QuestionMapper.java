@@ -1,6 +1,7 @@
 package com.mherda.livequiz.question;
 
 import com.mherda.livequiz.answer.Answer;
+import com.mherda.livequiz.answer.AnswerMapper;
 import com.mherda.livequiz.question.dto.QuestionResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class QuestionMapper {
                 question.getId(),
                 question.getContent(),
                 question.getAvailableAnswers().stream()
-                        .map(Answer::getContent)
+                        .map(AnswerMapper::toDto)
                         .toList()
         );
     }

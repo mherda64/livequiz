@@ -6,18 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Slf4j
 public class QuestionController {
 
     private final QuestionRepository questionRepository;
 
-    @MessageMapping("/questions")
-    @SendTo("/topic/questions")
+    @GetMapping("/questions")
     public List<QuestionResponse> getAllRestQuestions() {
         var allQuestions = questionRepository.findAll().stream()
                 .map(QuestionMapper::toDto).toList();
