@@ -21,10 +21,10 @@ public class Question {
     @Column(nullable = false)
     private Long id;
 
-//    @Lob
-//    @Column(nullable = true)
-//    @Basic(fetch = FetchType.LAZY)
-//    private byte[] picture;
+    @Lob
+    @Column(nullable = true)
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] picture;
 
     @Column(nullable = false)
     private String content;

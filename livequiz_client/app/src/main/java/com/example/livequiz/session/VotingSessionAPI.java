@@ -5,7 +5,7 @@ import retrofit2.http.GET;
 
 public interface VotingSessionAPI {
 
-    @GET("sessions/current")
+    @GET("sessions/current/healthcheck")
     Call<VotingSessionDTO> getCurrentVotingSession();
 
 }

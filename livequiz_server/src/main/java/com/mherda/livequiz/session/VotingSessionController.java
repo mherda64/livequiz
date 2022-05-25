@@ -1,6 +1,6 @@
 package com.mherda.livequiz.session;
 
-import com.mherda.livequiz.session.dto.VotingSessionResponse;
+import com.mherda.livequiz.session.dto.VotingSessionHealthCheck;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +13,12 @@ public class VotingSessionController {
 
     private final VotingSessionService votingSessionService;
 
-    @GetMapping("/sessions/current")
-    public VotingSessionResponse getCurrentVotingSession() {
+    @GetMapping("/sessions/current/healthcheck")
+    public VotingSessionHealthCheck getCurrentVotingSession() {
         try {
-            return votingSessionService.getCurrentVotingSession();
+            return votingSessionService.getCurrentVotingSessionHealthCheck();
         } catch (NoOpenSessionException e) {
-            return new VotingSessionResponse(null, null, SessionState.CLOSED, null, null);
+            return new VotingSessionHealthCheck(null, null, SessionState.CLOSED);
         }
     }
 

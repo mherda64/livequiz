@@ -3,8 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/activity_join.xml" value="0.3491847826086957" />
         <entry key="app/src/main/res/layout/activity_listview.xml" value="0.3894927536231884" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_question_answer.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_questionanswer.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_questionanswering.xml" value="0.21225937183383992" />
+        <entry key="app/src/main/res/layout/content_question_answer.xml" value="0.17426545086119555" />
+        <entry key="app/src/main/res/layout/fragment_first.xml" value="0.17426545086119555" />
+        <entry key="app/src/main/res/layout/fragment_join.xml" value="0.3491847826086957" />
+        <entry key="app/src/main/res/layout/fragment_question_answer.xml" value="0.3491847826086957" />
+        <entry key="app/src/main/res/layout/fragment_questionanswer.xml" value="0.3491847826086957" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3155" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3155" />
       </map>
     </option>
   </component>
