@@ -9,6 +9,7 @@ import java.util.Map;
 public record VotingSessionResponse(
         Long id,
         LocalDateTime startDate,
+        LocalDateTime endDate,
         SessionState sessionState,
         QuestionResponse question,
         Map<Long, Long> result

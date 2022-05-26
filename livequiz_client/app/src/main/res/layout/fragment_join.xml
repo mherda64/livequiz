@@ -69,6 +69,12 @@
                 android:layout_weight="1"
                 android:text="@string/session" />
 
+            <TextView
+                android:id="@+id/tv_endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/endDate" />
+
             <Button
                 android:id="@+id/btn_join"
                 android:layout_width="match_parent"

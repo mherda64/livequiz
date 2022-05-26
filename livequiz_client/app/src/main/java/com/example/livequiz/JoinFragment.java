@@ -15,7 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.livequiz.session.SessionState;
-import com.example.livequiz.session.VotingSessionDTO;
+import com.example.livequiz.session.dto.VotingSessionDTO;
 import com.example.livequiz.session.VotingSessionService;
 
 import java.time.format.DateTimeFormatter;
@@ -32,6 +32,7 @@ public class JoinFragment extends Fragment {
     private Button btn_join;
     private TextView tv_sessionState;
     private TextView tv_startDate;
+    private TextView tv_endDate;
     private EditText et_baseAddress;
 
     @Override
@@ -48,6 +49,7 @@ public class JoinFragment extends Fragment {
         btn_join = view.findViewById(R.id.btn_join);
         tv_sessionState = view.findViewById(R.id.tv_sessionState);
         tv_startDate = view.findViewById(R.id.tv_startDate);
+        tv_endDate = view.findViewById(R.id.tv_endDate);
         et_baseAddress = view.findViewById(R.id.et_baseAddress);
 
         btn_join.setEnabled(false);
@@ -58,7 +60,7 @@ public class JoinFragment extends Fragment {
 
             votingSessionService.updateBaseUrl(et_baseAddress.getText().toString());
 
-            votingSessionService.getCurrentVotingSession().enqueue(new Callback<VotingSessionDTO>() {
+            votingSessionService.getCurrentVotingSessionHealthCheck().enqueue(new Callback<VotingSessionDTO>() {
                 @Override
                 public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
                     if (!response.isSuccessful()) {
@@ -69,6 +71,9 @@ public class JoinFragment extends Fragment {
                     if (dto != null) {
                         if (dto.getStartDate() != null) {
                             tv_startDate.setText(getString(R.string.startDate) + dto.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                        }
+                        if (dto.getEndDate() != null) {
+                            tv_endDate.setText(getString(R.string.endDate) + dto.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                         }
                         if (dto.getSessionState() != null) {
                             tv_sessionState.setText(getString(R.string.session) + dto.getSessionState().toString());

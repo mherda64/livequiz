@@ -14,6 +14,7 @@ public class VotingSessionMapper {
         return new VotingSessionResponse(
                 votingSession.getId(),
                 votingSession.getStartDate(),
+                votingSession.getEndDate(),
                 votingSession.getSessionState(),
                 QuestionMapper.toDto(votingSession.getQuestion()),
                 votingSession.getResult().entrySet().stream()

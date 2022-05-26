@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record VotingSessionHealthCheck (
         Long id,
         LocalDateTime startDate,
+        LocalDateTime endDate,
         SessionState sessionState
 ){
 }

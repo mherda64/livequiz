@@ -18,8 +18,8 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/votingSession', function (votingSession) {
-            // console.log('votingSession:' + votingSession);
+        stompClient.subscribe('/topic', function (votingSession) {
+            console.log('votingSession:' + votingSession);
             showVotingSession(votingSession)
         });
     });

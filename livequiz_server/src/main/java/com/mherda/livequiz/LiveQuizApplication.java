@@ -45,7 +45,7 @@ class MyRunner implements CommandLineRunner {
                 .sessionState(SessionState.OPEN)
                 .startDate(LocalDateTime.now())
                 .question(first)
-                .result(first.getAvailableAnswers().stream().collect(Collectors.toMap(Function.identity(), item -> item.getId() + 5)))
+                .result(first.getAvailableAnswers().stream().collect(Collectors.toMap(Function.identity(), item -> 0L)))
                 .build();
         votingSessionRepository.save(votingSession);
     }

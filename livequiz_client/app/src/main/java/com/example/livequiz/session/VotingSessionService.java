@@ -1,6 +1,7 @@
 package com.example.livequiz.session;
 
 import com.example.livequiz.request.Mapper;
+import com.example.livequiz.session.dto.VotingSessionDTO;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -34,6 +35,10 @@ public class VotingSessionService {
 
     public Call<VotingSessionDTO> getCurrentVotingSession() {
         return votingSessionAPI.getCurrentVotingSession();
+    }
+
+    public Call<VotingSessionDTO> getCurrentVotingSessionHealthCheck() {
+        return votingSessionAPI.getCurrentVotingSessionHealthCheck();
     }
 
 }
