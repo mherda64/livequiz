@@ -1,7 +1,9 @@
 package com.mherda.livequiz.session;
 
+import com.mherda.livequiz.exception.NoOpenSessionException;
 import com.mherda.livequiz.session.dto.VotingSessionHealthCheck;
 
+import com.mherda.livequiz.session.dto.VotingSessionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,24 +35,16 @@ public class VotingSessionController {
     }
 
     @GetMapping("/sessions/current")
-    public ResponseEntity getCurrentVotingSession() {
-        try {
-            return ResponseEntity.ok(votingSessionService.getCurrentVotingSession());
-        } catch (NoOpenSessionException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public VotingSessionResponse getCurrentVotingSession() {
+        return votingSessionService.getCurrentVotingSession();
     }
 
     @PostMapping("/sessions/current/vote")
     @MessageMapping("/topic")
-    public ResponseEntity addVotes(@RequestBody List<Long> chosenIds) {
-        try {
-            var response = votingSessionService.addVotes(chosenIds);
-            messagingTemplate.convertAndSend("/topic", response);
-            return ResponseEntity.ok(response);
-        } catch (NoOpenSessionException | NoSuchElementException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public VotingSessionResponse addVotes(@RequestBody List<Long> chosenIds) {
+        var response = votingSessionService.addVotes(chosenIds);
+        messagingTemplate.convertAndSend("/topic", response);
+        return response;
     }
 
 }

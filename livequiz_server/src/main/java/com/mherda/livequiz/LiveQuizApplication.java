@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ class MyRunner implements CommandLineRunner {
                 .sessionState(SessionState.OPEN)
                 .startDate(LocalDateTime.now())
                 .question(first)
-                .result(first.getAvailableAnswers().stream().collect(Collectors.toMap(Function.identity(), item -> 0L)))
+                .votes(new ArrayList<>())
                 .build();
         votingSessionRepository.save(votingSession);
     }

@@ -1,4 +1,4 @@
-package com.mherda.livequiz.session;
+package com.mherda.livequiz.exception;
 
 public class NoOpenSessionException extends RuntimeException {
     public NoOpenSessionException(String message) {

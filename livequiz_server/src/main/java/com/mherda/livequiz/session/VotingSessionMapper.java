@@ -2,6 +2,7 @@ package com.mherda.livequiz.session;
 
 import com.mherda.livequiz.question.QuestionMapper;
 import com.mherda.livequiz.session.dto.VotingSessionResponse;
+import com.mherda.livequiz.vote.Vote;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -15,10 +16,14 @@ public class VotingSessionMapper {
                 votingSession.getId(),
                 votingSession.getStartDate(),
                 votingSession.getEndDate(),
+                (long) votingSession.getVotes().size(),
                 votingSession.getSessionState(),
                 QuestionMapper.toDto(votingSession.getQuestion()),
-                votingSession.getResult().entrySet().stream()
-                        .collect(Collectors.toMap(entry -> entry.getKey().getId(), Map.Entry::getValue))
+                votingSession.getVotes().stream()
+                        .flatMap(vote -> vote.getAnswers().entrySet().stream())
+                        .collect(Collectors.groupingBy(
+                                entry -> entry.getKey().getId(),
+                                Collectors.summingLong(entry -> entry.getValue() ? 1 : 0)))
         );
     }
 }
