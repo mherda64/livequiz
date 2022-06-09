@@ -1,6 +1,5 @@
 package com.mherda.livequiz.session;
 
-import com.mherda.livequiz.answer.Answer;
 import com.mherda.livequiz.question.Question;
 import com.mherda.livequiz.vote.Vote;
 import jakarta.persistence.*;
@@ -8,7 +7,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "voting_session")
@@ -36,10 +34,4 @@ public class VotingSession {
     @OneToMany
     private List<Vote> votes;
 
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "voting_session_answer_mapping",
-//        joinColumns = {@JoinColumn(name = "voting_session_id", referencedColumnName = "id")}
-//    )
-//    @MapKeyJoinColumn(name = "answer_id")
-//    private Map<Answer, Long> result;
 }

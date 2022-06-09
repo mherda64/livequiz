@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,9 +36,20 @@ public class VotingSessionService {
         return VotingSessionMapper.toDto(currentSession);
     }
 
+    public VotingSessionResponse changeStatus(Long id, SessionState status) {
+        var session = votingSessionRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(String.format("Session with id [%d] not found!", id)));
+        session.setSessionState(status);
+        votingSessionRepository.save(session);
+        return VotingSessionMapper.toDto(session);
+    }
+
     @Transactional
     public VotingSessionResponse addVotes(List<Long> chosenIds) {
         var currentSession = getCurrentSession();
+        if (!currentSession.getSessionState().equals(SessionState.OPEN))
+            throw new NoOpenSessionException("No voting session currently open");
+
         var availableAnswers = currentSession.getQuestion().getAvailableAnswers();
 
         chosenIds.stream()

@@ -1,3 +1,8 @@
+.canvas-style {
+    max-width: 300px;
+    max-height: 300px;
+}
+
 body {
     background-color: #f5f5f5;
 }

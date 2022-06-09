@@ -21,7 +21,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/liveQuiz-websocket");
-		registry.addEndpoint("/liveQuiz-websocket").withSockJS();
 	}
 
 }

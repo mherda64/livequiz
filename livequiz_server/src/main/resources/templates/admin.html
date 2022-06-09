@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin console</title>
+    <link rel="stylesheet" th:href="@{/admin.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+    <script type="text/javascript" th:src="@{/stomp.js}"></script>
+    <script type="text/javascript" th:src="@{/app.js}"></script>
+    <script th:inline="javascript">
+
+        var _labels = [[${labels}]];
+        var _values = [[${values}]];
+
+        var data = {
+            datasets: [{
+                data: _values,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                ]
+            }],
+            labels: _labels,
+        }
+
+        connect();
+    </script>
+</head>
+<body>
+<div id="main-content">
+
+    <p th:if="${votingSession == null}">No voting session currently open, create one!</p>
+    <div th:if="${votingSession != null}">
+        <div>
+            <span>Id:</span>
+            <span th:text="${votingSession.id} ?: 'Not set'"></span>
+        </div>
+        <div>
+            <span>Start Date:</span>
+            <span th:text="${votingSession.startDate} ?: 'Not set'"></span>
+        </div>
+        <div>
+            <span>End Date:</span>
+            <span th:text="${votingSession.endDate} ?: 'Not set'"></span>
+        </div>
+        <div>
+            <span>Current vote count:</span>
+            <span id="voteCount" th:text="${votingSession.voteCount} ?: 'Not set'"></span>
+        </div>
+        <div>
+            <span>Current session state:</span>
+            <span th:text="${votingSession.sessionState} ?: 'Not set'"></span>
+        </div>
+        <div th:if="${votingSession.question != null} ?: 'No question set'"
+             th:with="question=${votingSession.question}">
+            <div>
+                <span>Question Id:</span>
+                <span th:text="${question.id} ?: 'Not set'"></span>
+                <span th:text="${question.content} ?: 'Not set'"></span>
+            </div>
+            <div th:each="answer : ${question.answers}">
+                <div>
+                    <span>Answer id:</span>
+                    <span th:text="${answer.id} ?: 'Not set'"></span>
+                    <span th:text="${answer.content} ?: 'Not set'"></span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).CLOSED}">
+                <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
+                    <button type="submit" th:name="sessionState"
+                            th:value="${T(com.mherda.livequiz.session.SessionState).OPEN}">Open voting session</button>
+                </form>
+            </div>
+            <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).OPEN}">
+                <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
+                    <button type="submit" th:name="sessionState"
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">Close voting session</button>
+                </form>
+            </div>
+            <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">
+                <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
+                    <button type="submit" th:name="sessionState"
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_CLOSED}">Archive voting session</button>
+                </form>
+            </div>
+        </div>
+        <div class="canvas-style">
+            <canvas id="myChart" width="300" height="300"></canvas>
+            <script>
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const config = {
+                    type: 'pie',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Votes'
+                            }
+                        }
+                    },
+                };
+                const myChart = new Chart(ctx, config);
+            </script>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
