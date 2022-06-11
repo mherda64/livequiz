@@ -1,42 +1,58 @@
 package com.example.livequiz;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.livequiz.answer.AnswerDTO;
+import com.example.livequiz.session.VotingSessionService;
+import com.example.livequiz.session.dto.VotingSessionDTO;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class QuestionAnswerFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private VotingSessionService votingSessionService;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String DEST_ADDRESS = "destAddress";
+
+    private String destAddress;
+    private VotingSessionDTO votingSessionDTO;
+
+    private Map<Long, Boolean> userAnswers;
+
+    private TextView tv_questionId;
+    private TextView tv_questionContent;
+    private LinearLayout answerLayout;
+    private Button btn_voteButton;
 
     public QuestionAnswerFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QuestionAnswerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static QuestionAnswerFragment newInstance(String param1, String param2) {
+    public static QuestionAnswerFragment newInstance(String destAddress) {
         QuestionAnswerFragment fragment = new QuestionAnswerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(DEST_ADDRESS, destAddress);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,15 +61,84 @@ public class QuestionAnswerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            destAddress = getArguments().getString(DEST_ADDRESS);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_question_answer, container, false);
+        View view = inflater.inflate(R.layout.fragment_question_answer, container, false);
+
+        tv_questionId = view.findViewById(R.id.tv_questionId);
+        tv_questionContent = view.findViewById(R.id.tv_questionContent);
+        answerLayout = view.findViewById(R.id.answerLayout);
+        btn_voteButton = view.findViewById(R.id.btn_voteButton);
+
+        votingSessionService = new VotingSessionService(destAddress);
+
+        votingSessionService.getCurrentVotingSession().enqueue(new Callback<VotingSessionDTO>() {
+            @Override
+            public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                votingSessionDTO = response.body();
+
+                tv_questionId.setText(getString(R.string.questionId) + votingSessionDTO.getId());
+                tv_questionContent.setText(getString(R.string.questionContent) + votingSessionDTO.getQuestion().getContent());
+
+                List<AnswerDTO> answers = votingSessionDTO.getQuestion().getAnswers();
+                userAnswers = answers.stream()
+                        .map(AnswerDTO::getId)
+                        .collect(Collectors.toMap(Function.identity(), e -> Boolean.FALSE));
+
+                for (int i = 0; i < answers.size(); i++) {
+                    AnswerDTO answer = answers.get(i);
+                    CheckBox checkBox = new CheckBox(getActivity());
+                    checkBox.setId(answer.getId().intValue());
+                    checkBox.setText(answer.getContent());
+                    checkBox.setTag(answer.getId());
+
+                    checkBox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                        if (isChecked) {
+                            Log.d(TAG, "Value is checked = " + compoundButton.getTag());
+                        } else {
+                            Log.d(TAG, "Value is unchecked = " + compoundButton.getTag());
+                        }
+                        userAnswers.put((Long) compoundButton.getTag(), isChecked);
+                    });
+
+                    answerLayout.addView(checkBox);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
+                Toast.makeText(getActivity(), "ERROR: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        btn_voteButton.setOnClickListener(v -> {
+            List<Long> chosenIds = userAnswers.entrySet().stream()
+                    .filter(Map.Entry::getValue)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+
+            votingSessionService.sendVote(chosenIds).enqueue(new Callback<VotingSessionDTO>() {
+                @Override
+                public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
+                    Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
+                    Toast.makeText(getActivity(), "ERROR: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+
+        return view;
     }
 }

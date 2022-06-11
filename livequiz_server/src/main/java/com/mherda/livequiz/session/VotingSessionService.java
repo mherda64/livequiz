@@ -29,12 +29,8 @@ public class VotingSessionService {
     private final QuestionRepository questionRepository;
 
     public VotingSessionHealthCheck getCurrentVotingSessionHealthCheck() {
-        var session = VotingSessionMapper.toDto(getCurrentVotingSession());
+        var session = VotingSessionMapper.toDto(getCurrentSession());
         return new VotingSessionHealthCheck(session.id(), session.startDate(), session.endDate(), session.sessionState());
-    }
-
-    public VotingSession getCurrentVotingSession() {
-        return getCurrentSession();
     }
 
     public VotingSessionResponse changeStatus(Long id, SessionState status) {
@@ -98,7 +94,7 @@ public class VotingSessionService {
         return votingSession;
     }
 
-    private VotingSession getCurrentSession() {
+    public VotingSession getCurrentSession() {
         return votingSessionRepository.findAll().stream()
                 .filter(session -> List.of(SessionState.CLOSED, SessionState.OPEN, SessionState.FINISHED_RESULTS).contains(session.getSessionState()))
                 .findFirst()

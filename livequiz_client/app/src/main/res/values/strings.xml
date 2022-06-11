@@ -4,6 +4,9 @@
     <string name="startDate">Start date: </string>
     <string name="endDate">End date: </string>
     <string name="baseAddress">http://10.0.2.2:8080/</string>
+    <string name="questionId">Question ID: </string>
+    <string name="questionContent">Question: </string>
+    <string name="vote">Vote!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_question_answer">QuestionAnswer</string>

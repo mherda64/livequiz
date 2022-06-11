@@ -21,5 +21,9 @@
         android:id="@+id/questionAnswerFragment"
         android:name="com.example.livequiz.QuestionAnswerFragment"
         android:label="fragment_question_answer"
-        tools:layout="@layout/fragment_question_answer" />
+        tools:layout="@layout/fragment_question_answer" >
+        <argument
+            android:name="destAddress"
+            app:argType="string" />
+    </fragment>
 </navigation>

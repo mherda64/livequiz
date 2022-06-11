@@ -3,18 +3,18 @@ package com.example.livequiz.session;
 import com.example.livequiz.request.Mapper;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class VotingSessionService {
 
-    private String baseUrl;
     private Retrofit retrofit;
     private VotingSessionAPI votingSessionAPI;
 
     public VotingSessionService(String baseUrl) {
-        this.baseUrl = baseUrl;
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -39,6 +39,10 @@ public class VotingSessionService {
 
     public Call<VotingSessionDTO> getCurrentVotingSessionHealthCheck() {
         return votingSessionAPI.getCurrentVotingSessionHealthCheck();
+    }
+    
+    public Call<VotingSessionDTO> sendVote(List<Long> chosenIds) {
+        return votingSessionAPI.sendVote(chosenIds);
     }
 
 }

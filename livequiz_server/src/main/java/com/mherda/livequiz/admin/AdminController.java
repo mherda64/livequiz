@@ -27,7 +27,7 @@ public class AdminController {
         model.addAttribute("questions", questions);
 
         try {
-            var votingSession = VotingSessionMapper.toDto(votingSessionService.getCurrentVotingSession());
+            var votingSession = VotingSessionMapper.toDto(votingSessionService.getCurrentSession());
             model.addAttribute("votingSession", votingSession);
             model.addAttribute("labels", votingSession.result().keySet());
             model.addAttribute("values", votingSession.result().values());

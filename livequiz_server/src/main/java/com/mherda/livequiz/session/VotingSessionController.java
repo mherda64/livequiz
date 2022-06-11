@@ -36,7 +36,7 @@ public class VotingSessionController {
 
     @GetMapping("/sessions/current")
     public VotingSessionResponse getCurrentVotingSession() {
-        return VotingSessionMapper.toDto(votingSessionService.getCurrentVotingSession());
+        return VotingSessionMapper.toDto(votingSessionService.getCurrentSession());
     }
 
     @PostMapping("/sessions/current/vote")

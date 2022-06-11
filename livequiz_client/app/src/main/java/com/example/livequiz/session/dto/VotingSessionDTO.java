@@ -13,9 +13,11 @@ import lombok.Data;
 @Data
 public class VotingSessionDTO {
     private Long id;
+    @Nullable
     private LocalDateTime startDate;
     @Nullable
     private LocalDateTime endDate;
+    private Long voteCount;
     private SessionState sessionState;
     private QuestionDTO question;
     private Map<Long, Long> result;

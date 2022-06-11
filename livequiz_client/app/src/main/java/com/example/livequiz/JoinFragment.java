@@ -94,8 +94,10 @@ public class JoinFragment extends Fragment {
 
         btn_join.setOnClickListener(v -> {
             if (btn_join.isEnabled()) {
+                JoinFragmentDirections.ActionJoinFragmentToQuestionAnswerFragment action =
+                        JoinFragmentDirections.actionJoinFragmentToQuestionAnswerFragment(String.valueOf(et_baseAddress.getText()));
                 NavController navController = NavHostFragment.findNavController(this);
-                navController.navigate(R.id.action_joinFragment_to_questionAnswerFragment);
+                navController.navigate(action);
             }
         });
 
