@@ -61,9 +61,9 @@ class MyRunner implements CommandLineRunner {
 
     private Question generateQuestion(String content) {
         var answers = List.of(
-                Answer.builder().content("Odpowiedź pierwsza").isCorrect(true).build(),
-                Answer.builder().content("Odpowiedź druga").isCorrect(false).build(),
-                Answer.builder().content("Odpowiedź trzecia").isCorrect(false).build()
+                Answer.builder().content("Odpowiedź pierwsza").isCorrect(((int)(Math.random() * 100)) % 2 == 0).build(),
+                Answer.builder().content("Odpowiedź druga").isCorrect(((int)(Math.random() * 100)) % 2 == 0).build(),
+                Answer.builder().content("Odpowiedź trzecia").isCorrect(((int)(Math.random() * 100)) % 2 == 0).build()
         );
 
         return Question.builder()

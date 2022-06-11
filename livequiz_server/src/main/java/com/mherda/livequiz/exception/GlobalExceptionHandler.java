@@ -24,4 +24,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       return ResponseEntity.badRequest().body(noSuchAnswerException.getMessage());
     }
 
+    @ExceptionHandler(SessionAlreadyOpenedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleNoOpenSessionException(
+            SessionAlreadyOpenedException sessionAlreadyOpenedException) {
+      return ResponseEntity.badRequest().body(sessionAlreadyOpenedException.getMessage());
+    }
+
 }

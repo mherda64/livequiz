@@ -17,11 +17,11 @@ import java.util.List;
 @Slf4j
 public class QuestionController {
 
-    private final QuestionRepository questionRepository;
+    private final QuestionService questionService;
 
     @GetMapping("/questions")
     public List<QuestionResponse> getAllRestQuestions() {
-        var allQuestions = questionRepository.findAll().stream()
+        var allQuestions = questionService.getAll().stream()
                 .map(QuestionMapper::toDto).toList();
         log.info("Requested all questions, returning {}", allQuestions);
         return allQuestions;

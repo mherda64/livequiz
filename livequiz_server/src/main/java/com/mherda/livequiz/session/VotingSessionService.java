@@ -4,6 +4,7 @@ import com.mherda.livequiz.answer.Answer;
 import com.mherda.livequiz.answer.AnswerRepository;
 import com.mherda.livequiz.exception.NoOpenSessionException;
 import com.mherda.livequiz.exception.NoSuchAnswerException;
+import com.mherda.livequiz.question.QuestionRepository;
 import com.mherda.livequiz.session.dto.VotingSessionHealthCheck;
 import com.mherda.livequiz.session.dto.VotingSessionResponse;
 import com.mherda.livequiz.vote.Vote;
@@ -12,9 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -24,22 +26,25 @@ public class VotingSessionService {
 
     private final VoteRepository voteRepository;
     private final VotingSessionRepository votingSessionRepository;
-    private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
 
     public VotingSessionHealthCheck getCurrentVotingSessionHealthCheck() {
-        var session = getCurrentVotingSession();
+        var session = VotingSessionMapper.toDto(getCurrentVotingSession());
         return new VotingSessionHealthCheck(session.id(), session.startDate(), session.endDate(), session.sessionState());
     }
 
-    public VotingSessionResponse getCurrentVotingSession() {
-        var currentSession = getCurrentSession();
-        return VotingSessionMapper.toDto(currentSession);
+    public VotingSession getCurrentVotingSession() {
+        return getCurrentSession();
     }
 
     public VotingSessionResponse changeStatus(Long id, SessionState status) {
         var session = votingSessionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Session with id [%d] not found!", id)));
         session.setSessionState(status);
+        switch (status) {
+            case OPEN -> session.setStartDate(LocalDateTime.now());
+            case FINISHED_RESULTS -> session.setEndDate(LocalDateTime.now());
+        }
         votingSessionRepository.save(session);
         return VotingSessionMapper.toDto(session);
     }
@@ -75,9 +80,27 @@ public class VotingSessionService {
         return VotingSessionMapper.toDto(currentSession);
     }
 
+    public List<VotingSession> getAll() {
+        return votingSessionRepository.findAll();
+    }
+
+    public VotingSession createNew(Long questionId) {
+        var question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("Question with id: [%d] doesn't exist", questionId)));
+
+        var votingSession = VotingSession.builder()
+                .sessionState(SessionState.CLOSED)
+                .question(question)
+                .votes(new ArrayList<>())
+                .build();
+        votingSessionRepository.save(votingSession);
+
+        return votingSession;
+    }
+
     private VotingSession getCurrentSession() {
         return votingSessionRepository.findAll().stream()
-                .filter(session -> List.of(SessionState.OPEN, SessionState.FINISHED_RESULTS).contains(session.getSessionState()))
+                .filter(session -> List.of(SessionState.CLOSED, SessionState.OPEN, SessionState.FINISHED_RESULTS).contains(session.getSessionState()))
                 .findFirst()
                 .orElseThrow(() -> new NoOpenSessionException("No voting session currently open"));
     }

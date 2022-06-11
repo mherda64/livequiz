@@ -31,7 +31,32 @@
 <body>
 <div id="main-content">
 
-    <p th:if="${votingSession == null}">No voting session currently open, create one!</p>
+    <div th:if="${votingSession == null}">
+        <p>No voting session currently open, create one!</p>
+        <div>
+            <h3>Questions</h3>
+            <div th:each="question: ${questions}">
+                <div>
+                    <span>Id:</span>
+                    <span th:text="${question.id}"></span>
+                    <span th:text="${question.content}"></span>
+                    <div>
+                        <div th:each="answer: ${question.availableAnswers}">
+                            <span th:text="${answer.content}"></span>
+                            <span th:if="${answer.isCorrect == true}">✓</span>
+                            <span th:if="${answer.isCorrect == false}">✗</span>
+                        </div>
+                    </div>
+                </div>
+                <form method="POST" th:action="@{/sessions}">
+                    <button type="submit" th:name="questionId"
+                            th:value="${question.id}">
+                        Create
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
     <div th:if="${votingSession != null}">
         <div>
             <span>Id:</span>
@@ -72,19 +97,24 @@
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).CLOSED}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).OPEN}">Open voting session</button>
+                            th:value="${T(com.mherda.livequiz.session.SessionState).OPEN}">Open voting session
+                    </button>
                 </form>
             </div>
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).OPEN}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">Close voting session</button>
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">Close voting
+                        session
+                    </button>
                 </form>
             </div>
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_CLOSED}">Archive voting session</button>
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_CLOSED}">Archive voting
+                        session
+                    </button>
                 </form>
             </div>
         </div>
