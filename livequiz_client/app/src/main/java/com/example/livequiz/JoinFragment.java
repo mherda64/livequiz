@@ -1,10 +1,14 @@
 package com.example.livequiz;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,11 +18,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.livequiz.answer.AnswerDTO;
 import com.example.livequiz.session.SessionState;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 import com.example.livequiz.session.VotingSessionService;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +35,9 @@ import retrofit2.Response;
 public class JoinFragment extends Fragment {
 
     private VotingSessionService votingSessionService;
+    private QuizApplication quizApplication;
+
+    private VotingSessionDTO votingSession;
 
     private Button btn_updateVotingSession;
     private Button btn_join;
@@ -38,6 +49,7 @@ public class JoinFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        quizApplication = (QuizApplication) getActivity().getApplicationContext();
     }
 
     @Override
@@ -60,25 +72,25 @@ public class JoinFragment extends Fragment {
 
             votingSessionService.updateBaseUrl(et_baseAddress.getText().toString());
 
-            votingSessionService.getCurrentVotingSessionHealthCheck().enqueue(new Callback<VotingSessionDTO>() {
+            votingSessionService.getCurrentVotingSession().enqueue(new Callback<VotingSessionDTO>() {
                 @Override
                 public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
                     if (!response.isSuccessful()) {
                         Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
                         return;
                     }
-                    VotingSessionDTO dto = response.body();
-                    if (dto != null) {
-                        if (dto.getStartDate() != null) {
-                            tv_startDate.setText(getString(R.string.startDate) + dto.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                    votingSession = response.body();
+                    if (votingSession != null) {
+                        if (votingSession.getStartDate() != null) {
+                            tv_startDate.setText(getString(R.string.startDate) + votingSession.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                         }
-                        if (dto.getEndDate() != null) {
-                            tv_endDate.setText(getString(R.string.endDate) + dto.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                        if (votingSession.getEndDate() != null) {
+                            tv_endDate.setText(getString(R.string.endDate) + votingSession.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                         }
-                        if (dto.getSessionState() != null) {
-                            tv_sessionState.setText(getString(R.string.session) + dto.getSessionState().toString());
+                        if (votingSession.getSessionState() != null) {
+                            tv_sessionState.setText(getString(R.string.session) + votingSession.getSessionState().toString());
                         }
-                        btn_join.setEnabled(dto.getSessionState() == null || dto.getSessionState().equals(SessionState.OPEN));
+                        btn_join.setEnabled(votingSession.getSessionState() == null || votingSession.getSessionState().equals(SessionState.OPEN));
                     }
                 }
 
@@ -94,10 +106,17 @@ public class JoinFragment extends Fragment {
 
         btn_join.setOnClickListener(v -> {
             if (btn_join.isEnabled()) {
-                JoinFragmentDirections.ActionJoinFragmentToQuestionAnswerFragment action =
-                        JoinFragmentDirections.actionJoinFragmentToQuestionAnswerFragment(String.valueOf(et_baseAddress.getText()));
                 NavController navController = NavHostFragment.findNavController(this);
-                navController.navigate(action);
+                if (quizApplication.hasAlreadyVoted(votingSession.getId())) {
+                    navController.navigate(JoinFragmentDirections.actionJoinFragmentToResultsFragment());
+                } else {
+                    JoinFragmentDirections.ActionJoinFragmentToQuestionAnswerFragment action =
+                            JoinFragmentDirections.actionJoinFragmentToQuestionAnswerFragment(
+                                    String.valueOf(et_baseAddress.getText()),
+                                    votingSession
+                            );
+                    navController.navigate(action);
+                }
             }
         });
 

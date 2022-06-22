@@ -5,6 +5,8 @@ import static android.content.ContentValues.TAG;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,9 +34,13 @@ import retrofit2.Response;
 
 public class QuestionAnswerFragment extends Fragment {
 
+    private QuestionAnswerFragment questionAnswerFragment;
+
     private VotingSessionService votingSessionService;
+    private QuizApplication quizApplication;
 
     private static final String DEST_ADDRESS = "destAddress";
+    private static final String VOTING_SESSION_DTO = "votingSessionDto";
 
     private String destAddress;
     private VotingSessionDTO votingSessionDTO;
@@ -62,7 +68,10 @@ public class QuestionAnswerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             destAddress = getArguments().getString(DEST_ADDRESS);
+            votingSessionDTO = (VotingSessionDTO) getArguments().get(VOTING_SESSION_DTO);
         }
+        questionAnswerFragment = this;
+        quizApplication = (QuizApplication) getActivity().getApplicationContext();
     }
 
     @Override
@@ -77,68 +86,56 @@ public class QuestionAnswerFragment extends Fragment {
 
         votingSessionService = new VotingSessionService(destAddress);
 
-        votingSessionService.getCurrentVotingSession().enqueue(new Callback<VotingSessionDTO>() {
-            @Override
-            public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
-                    return;
+        tv_questionId.setText(getString(R.string.questionId) + votingSessionDTO.getId());
+        tv_questionContent.setText(getString(R.string.questionContent) + votingSessionDTO.getQuestion().getContent());
+
+        List<AnswerDTO> answers = votingSessionDTO.getQuestion().getAnswers();
+        userAnswers = answers.stream()
+                .map(AnswerDTO::getId)
+                .collect(Collectors.toMap(Function.identity(), e -> Boolean.FALSE));
+
+        for (int i = 0; i < answers.size(); i++) {
+            AnswerDTO answer = answers.get(i);
+            CheckBox checkBox = new CheckBox(getActivity());
+            checkBox.setId(answer.getId().intValue());
+            checkBox.setText(answer.getContent());
+            checkBox.setTag(answer.getId());
+
+            checkBox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+                if (isChecked) {
+                    Log.d(TAG, "Value is checked = " + compoundButton.getTag());
+                } else {
+                    Log.d(TAG, "Value is unchecked = " + compoundButton.getTag());
                 }
-                votingSessionDTO = response.body();
-
-                tv_questionId.setText(getString(R.string.questionId) + votingSessionDTO.getId());
-                tv_questionContent.setText(getString(R.string.questionContent) + votingSessionDTO.getQuestion().getContent());
-
-                List<AnswerDTO> answers = votingSessionDTO.getQuestion().getAnswers();
-                userAnswers = answers.stream()
-                        .map(AnswerDTO::getId)
-                        .collect(Collectors.toMap(Function.identity(), e -> Boolean.FALSE));
-
-                for (int i = 0; i < answers.size(); i++) {
-                    AnswerDTO answer = answers.get(i);
-                    CheckBox checkBox = new CheckBox(getActivity());
-                    checkBox.setId(answer.getId().intValue());
-                    checkBox.setText(answer.getContent());
-                    checkBox.setTag(answer.getId());
-
-                    checkBox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-                        if (isChecked) {
-                            Log.d(TAG, "Value is checked = " + compoundButton.getTag());
-                        } else {
-                            Log.d(TAG, "Value is unchecked = " + compoundButton.getTag());
-                        }
-                        userAnswers.put((Long) compoundButton.getTag(), isChecked);
-                    });
-
-                    answerLayout.addView(checkBox);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
-                Toast.makeText(getActivity(), "ERROR: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        btn_voteButton.setOnClickListener(v -> {
-            List<Long> chosenIds = userAnswers.entrySet().stream()
-                    .filter(Map.Entry::getValue)
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
-
-            votingSessionService.sendVote(chosenIds).enqueue(new Callback<VotingSessionDTO>() {
-                @Override
-                public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
-                    Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
-                    Toast.makeText(getActivity(), "ERROR: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                userAnswers.put((Long) compoundButton.getTag(), isChecked);
             });
-        });
 
+            answerLayout.addView(checkBox);
+
+            btn_voteButton.setOnClickListener(v -> {
+
+                List<Long> chosenIds = userAnswers.entrySet().stream()
+                        .filter(Map.Entry::getValue)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+
+                votingSessionService.sendVote(chosenIds).enqueue(new Callback<VotingSessionDTO>() {
+                    @Override
+                    public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
+                        Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
+                        quizApplication.addVote(votingSessionDTO.getId());
+                        NavHostFragment.findNavController(questionAnswerFragment)
+                                .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToResultsFragment());
+                    }
+
+                    @Override
+                    public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
+                        Toast.makeText(getActivity(), "ERROR: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            });
+
+        }
         return view;
     }
 }

@@ -16,6 +16,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_joinFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/questionAnswerFragment"
@@ -25,5 +32,21 @@
         <argument
             android:name="destAddress"
             app:argType="string" />
+        <argument
+            android:name="votingSessionDto"
+            app:argType="com.example.livequiz.session.dto.VotingSessionDTO" />
+        <action
+            android:id="@+id/action_questionAnswerFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/joinFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.example.livequiz.ResultsFragment"
+        android:label="fragment_results"
+        tools:layout="@layout/fragment_results" />
 </navigation>
