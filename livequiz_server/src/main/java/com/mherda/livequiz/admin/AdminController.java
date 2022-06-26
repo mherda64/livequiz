@@ -8,6 +8,7 @@ import com.mherda.livequiz.session.SessionState;
 import com.mherda.livequiz.session.VotingSessionMapper;
 import com.mherda.livequiz.session.VotingSessionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class AdminController {
 
     private final QuestionService questionService;
     private final VotingSessionService votingSessionService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/admin")
     public String getPanel(Model model) {
@@ -40,7 +42,8 @@ public class AdminController {
 
     @PostMapping("/sessions/{id}/status")
     public String changeStatus(@PathVariable Long id, SessionState sessionState) {
-        votingSessionService.changeStatus(id, sessionState);
+        var response = votingSessionService.changeStatus(id, sessionState);
+        messagingTemplate.convertAndSend("/topic", response);
         return "redirect:/admin";
     }
 
