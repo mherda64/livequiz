@@ -36,6 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,6 +53,7 @@ public class QuestionAnswerFragment extends Fragment {
     private VotingSessionDTO votingSessionDTO;
 
     private Map<Long, Boolean> userAnswers;
+    private Disposable socketDisposable;
 
     private TextView tv_questionId;
     private TextView tv_questionContent;
@@ -107,6 +109,7 @@ public class QuestionAnswerFragment extends Fragment {
             CheckBox checkBox = new CheckBox(getActivity());
             checkBox.setId(answer.getId().intValue());
             checkBox.setText(answer.getContent());
+            checkBox.setTextSize(20);
             checkBox.setTag(answer.getId());
 
             checkBox.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -132,8 +135,24 @@ public class QuestionAnswerFragment extends Fragment {
                     public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
                         Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
                         quizApplication.addVote(votingSessionDTO.getId());
-                        NavHostFragment.findNavController(questionAnswerFragment)
+                        if (response.body() != null)
+                            NavHostFragment.findNavController(questionAnswerFragment)
                                 .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToResultsFragment(response.body()));
+                        if (response.code() >= 400) {
+                            votingSessionService.getCurrentVotingSession().enqueue(new Callback<VotingSessionDTO>() {
+                                @Override
+                                public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
+                                    NavHostFragment.findNavController(questionAnswerFragment)
+                                            .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToResultsFragment(response.body()));
+                                }
+
+                                @Override
+                                public void onFailure(Call<VotingSessionDTO> call, Throwable t) {
+                                    NavHostFragment.findNavController(questionAnswerFragment)
+                                            .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToJoinFragment());
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -149,7 +168,7 @@ public class QuestionAnswerFragment extends Fragment {
 
     private void subscribeOnSocket() {
         Flowable<StompMessage> socketFlowable = quizApplication.getStompMessageFlowable();
-        socketFlowable.subscribe(message -> {
+        socketDisposable = socketFlowable.subscribe(message -> {
             votingSessionDTO = Mapper.get().readValue(message.getPayload(), VotingSessionDTO.class);
             if (SessionState.shouldDisconnect(votingSessionDTO.getSessionState())) {
                 new Handler(Looper.getMainLooper()).post(() ->
@@ -158,5 +177,11 @@ public class QuestionAnswerFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        socketDisposable.dispose();
     }
 }

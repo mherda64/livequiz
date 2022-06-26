@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">livequiz</string>
+    <string name="app_name">Java PRO Live Quiz</string>
     <string name="session">Session status: </string>
     <string name="startDate">Start date: </string>
     <string name="endDate">End date: </string>

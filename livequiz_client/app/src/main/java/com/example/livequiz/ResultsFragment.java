@@ -28,10 +28,9 @@ import com.github.mikephil.charting.data.PieEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class ResultsFragment extends Fragment {
@@ -42,6 +41,7 @@ public class ResultsFragment extends Fragment {
     private TextView tv_questionId;
     private TextView tv_questionContent;
     private LinearLayout answerLayout;
+    private Disposable socketDisposable;
     private PieChart pieChart;
     private List<Integer> colors = Arrays.asList(
             Color.parseColor("#6768e1"),
@@ -81,6 +81,7 @@ public class ResultsFragment extends Fragment {
         tv_questionContent = view.findViewById(R.id.tv_questionContentResult);
         answerLayout = view.findViewById(R.id.answerLayoutResult);
         pieChart = view.findViewById(R.id.chart);
+        pieChart.animateXY(1000, 1000);
 
         updateQuestion(votingSessionDTO);
 
@@ -104,6 +105,7 @@ public class ResultsFragment extends Fragment {
             if (dto.getSessionState().equals(SessionState.FINISHED_RESULTS))
                 answerText  = answerText + (answer.isCorrect() ? getString(R.string.correct) : getString(R.string.incorrect));
             answerTextView.setText(answerText);
+            answerTextView.setTextSize(20);
 
             Long result = dto.getResult().get(answer.getId());
             if (result > 0)
@@ -126,7 +128,7 @@ public class ResultsFragment extends Fragment {
 
     private void subscribeOnSocket() {
         Flowable<StompMessage> socketFlowable = quizApplication.getStompMessageFlowable();
-        socketFlowable.subscribe(message -> {
+        socketDisposable = socketFlowable.subscribe(message -> {
             votingSessionDTO = Mapper.get().readValue(message.getPayload(), VotingSessionDTO.class);
             if (SessionState.shouldDisconnect(votingSessionDTO.getSessionState())) {
                 new Handler(Looper.getMainLooper()).post(() ->
@@ -137,5 +139,11 @@ public class ResultsFragment extends Fragment {
 
             new Handler(Looper.getMainLooper()).post(() -> updateQuestion(votingSessionDTO));
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        socketDisposable.dispose();
     }
 }

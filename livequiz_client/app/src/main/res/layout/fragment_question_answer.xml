@@ -1,46 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".QuestionAnswerFragment">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_questionId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/questionId"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_questionContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/questionContent"
+            android:textSize="24sp" />
 
         <LinearLayout
+            android:id="@+id/answerLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_questionId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/questionId"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/tv_questionContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/questionContent"
-                android:textSize="24sp" />
-
-            <LinearLayout
-                android:id="@+id/answerLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_voteButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/vote" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</FrameLayout>
+
+        <Button
+            android:id="@+id/btn_voteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/vote" />
+    </LinearLayout>
+</ScrollView>
