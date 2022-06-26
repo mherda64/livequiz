@@ -133,7 +133,7 @@ public class QuestionAnswerFragment extends Fragment {
                 votingSessionService.sendVote(chosenIds).enqueue(new Callback<VotingSessionDTO>() {
                     @Override
                     public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
-                        Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
                         quizApplication.addVote(votingSessionDTO.getId());
                         if (response.body() != null)
                             NavHostFragment.findNavController(questionAnswerFragment)

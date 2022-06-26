@@ -19,12 +19,12 @@
 
     <Button
         android:id="@+id/btn_updateVotingSession"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_baseAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Update Voting Session" />
+        android:text="@string/updateVotingSession"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_baseAddress" />
 
     <Space
         android:id="@+id/space"
@@ -79,7 +79,7 @@
                 android:id="@+id/btn_join"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Join" />
+                android:text="@string/join" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
