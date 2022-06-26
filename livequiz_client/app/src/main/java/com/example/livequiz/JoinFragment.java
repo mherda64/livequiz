@@ -2,6 +2,9 @@ package com.example.livequiz;
 
 import static android.content.ContentValues.TAG;
 
+import static com.example.livequiz.Constants.DEST_ADDRESS;
+import static com.example.livequiz.Constants.VOTING_SESSION_DTO;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.livequiz.answer.AnswerDTO;
+import com.example.livequiz.request.Mapper;
 import com.example.livequiz.session.SessionState;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 import com.example.livequiz.session.VotingSessionService;
@@ -28,11 +32,15 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.reactivex.Flowable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class JoinFragment extends Fragment {
+
+    private static final String URL_REGEX = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
     private VotingSessionService votingSessionService;
     private QuizApplication quizApplication;
@@ -63,12 +71,20 @@ public class JoinFragment extends Fragment {
         tv_startDate = view.findViewById(R.id.tv_startDate);
         tv_endDate = view.findViewById(R.id.tv_endDate);
         et_baseAddress = view.findViewById(R.id.et_baseAddress);
-
         btn_join.setEnabled(false);
 
+        quizApplication.socketDisconnect();
         votingSessionService = new VotingSessionService(et_baseAddress.getText().toString());
 
         btn_updateVotingSession.setOnClickListener(v -> {
+
+            if (!et_baseAddress.getText().toString().matches(URL_REGEX)) {
+                Toast.makeText(getActivity(), "ERROR: Invalid URL", Toast.LENGTH_LONG).show();
+                tv_startDate.setText(getString(R.string.startDate));
+                tv_sessionState.setText(getString(R.string.session));
+                btn_join.setEnabled(false);
+                return;
+            }
 
             votingSessionService.updateBaseUrl(et_baseAddress.getText().toString());
 
@@ -106,10 +122,14 @@ public class JoinFragment extends Fragment {
 
         btn_join.setOnClickListener(v -> {
             if (btn_join.isEnabled()) {
+
+                quizApplication.socketConnect(et_baseAddress.getText().toString());
+
                 NavController navController = NavHostFragment.findNavController(this);
                 if (quizApplication.hasAlreadyVoted(votingSession.getId())) {
-                    navController.navigate(JoinFragmentDirections.actionJoinFragmentToResultsFragment());
+                    navController.navigate(JoinFragmentDirections.actionJoinFragmentToResultsFragment(votingSession));
                 } else {
+                    quizApplication.setDestAddress(et_baseAddress.getText().toString());
                     JoinFragmentDirections.ActionJoinFragmentToQuestionAnswerFragment action =
                             JoinFragmentDirections.actionJoinFragmentToQuestionAnswerFragment(
                                     String.valueOf(et_baseAddress.getText()),

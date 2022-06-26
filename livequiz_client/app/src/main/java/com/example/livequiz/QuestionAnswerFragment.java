@@ -2,6 +2,9 @@ package com.example.livequiz;
 
 import static android.content.ContentValues.TAG;
 
+import static com.example.livequiz.Constants.DEST_ADDRESS;
+import static com.example.livequiz.Constants.VOTING_SESSION_DTO;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -38,9 +41,6 @@ public class QuestionAnswerFragment extends Fragment {
 
     private VotingSessionService votingSessionService;
     private QuizApplication quizApplication;
-
-    private static final String DEST_ADDRESS = "destAddress";
-    private static final String VOTING_SESSION_DTO = "votingSessionDto";
 
     private String destAddress;
     private VotingSessionDTO votingSessionDTO;
@@ -125,7 +125,7 @@ public class QuestionAnswerFragment extends Fragment {
                         Toast.makeText(getActivity(), "SUCCESS: " + response, Toast.LENGTH_LONG).show();
                         quizApplication.addVote(votingSessionDTO.getId());
                         NavHostFragment.findNavController(questionAnswerFragment)
-                                .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToResultsFragment());
+                                .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToResultsFragment(response.body()));
                     }
 
                     @Override
