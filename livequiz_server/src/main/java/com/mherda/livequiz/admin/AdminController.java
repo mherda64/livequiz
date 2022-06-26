@@ -23,6 +23,8 @@ public class AdminController {
     private final VotingSessionService votingSessionService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    private static String NO_SESSION_OPEN = "Żadna sesja nie jest aktualnie otwarta!";
+
     @GetMapping("/admin")
     public String getPanel(Model model) {
         var questions = questionService.getAll();
@@ -34,7 +36,7 @@ public class AdminController {
             model.addAttribute("labels", votingSession.result().keySet());
             model.addAttribute("values", votingSession.result().values());
         } catch (NoOpenSessionException e) {
-            System.out.println("No voting session currently open!");
+            System.out.println(NO_SESSION_OPEN);
         }
 
         return "admin";
@@ -53,7 +55,7 @@ public class AdminController {
                 .anyMatch(session ->
                         List.of(SessionState.OPEN, SessionState.FINISHED_RESULTS)
                                 .contains(session.getSessionState()))) {
-            throw new SessionAlreadyOpenedException("Session already opened!");
+            throw new SessionAlreadyOpenedException("Sesja została już otwarta!");
         }
 
         votingSessionService.createNew(questionId);

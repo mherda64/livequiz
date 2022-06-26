@@ -1,17 +1,14 @@
 <resources>
     <string name="app_name">Java PRO Live Quiz</string>
-    <string name="session">Session status: </string>
-    <string name="startDate">Start date: </string>
-    <string name="endDate">End date: </string>
+    <string name="session">Stan sesji: </string>
+    <string name="startDate">Data startu: </string>
+    <string name="endDate">Data zakończenia: </string>
     <string name="baseAddress">http://10.0.2.2:8080/</string>
-    <string name="questionId">Question ID: </string>
-    <string name="questionContent">Question: </string>
-    <string name="vote">Vote!</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_question_answer">QuestionAnswer</string>
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="questionId">ID pytania: </string>
+    <string name="questionContent">Pytanie: </string>
+    <string name="vote">Głosuj!</string>
+    <string name="join">Dołącz</string>
+    <string name="updateVotingSession">Aktualizuj stan sesji</string>
     <string name="correct">\u2713</string>
     <string name="incorrect">\u2717</string>
 </resources>

@@ -20,7 +20,7 @@
                     'rgba(255, 99, 132, 1)',
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
-Sens                    'rgb(98,206,40)',
+                    'rgb(98,206,40)',
                     'rgb(231,178,67)',
                     'rgb(238,98,198)',
                     'rgb(98,238,201)',
@@ -38,9 +38,9 @@ Sens                    'rgb(98,206,40)',
 <div id="main-content">
 
     <div th:if="${votingSession == null}">
-        <p>No voting session currently open, create one!</p>
+        <p>Brak otwartej sesji, utwórz jakąś!</p>
         <div>
-            <h3>Questions</h3>
+            <h3>Pytania</h3>
             <div th:each="question: ${questions}">
                 <div>
                     <span>Id:</span>
@@ -57,7 +57,7 @@ Sens                    'rgb(98,206,40)',
                 <form method="POST" th:action="@{/sessions}">
                     <button type="submit" th:name="questionId"
                             th:value="${question.id}">
-                        Create
+                        Utwórz
                     </button>
                 </form>
             </div>
@@ -66,36 +66,36 @@ Sens                    'rgb(98,206,40)',
     <div th:if="${votingSession != null}">
         <div>
             <span>Id:</span>
-            <span th:text="${votingSession.id} ?: 'Not set'"></span>
+            <span th:text="${votingSession.id} ?: 'Nie ustawione'"></span>
         </div>
         <div>
-            <span>Start Date:</span>
-            <span th:text="${votingSession.startDate} ?: 'Not set'"></span>
+            <span>Data rozpoczęcia:</span>
+            <span th:text="${votingSession.startDate} ?: 'Nie ustawione'"></span>
         </div>
         <div>
-            <span>End Date:</span>
-            <span th:text="${votingSession.endDate} ?: 'Not set'"></span>
+            <span>Data zakończenia:</span>
+            <span th:text="${votingSession.endDate} ?: 'Nie ustawione'"></span>
         </div>
         <div>
-            <span>Current vote count:</span>
-            <span id="voteCount" th:text="${votingSession.voteCount} ?: 'Not set'"></span>
+            <span>Aktualna liczba głosów:</span>
+            <span id="voteCount" th:text="${votingSession.voteCount} ?: 'Nie ustawione'"></span>
         </div>
         <div>
-            <span>Current session state:</span>
-            <span th:text="${votingSession.sessionState} ?: 'Not set'"></span>
+            <span>Aktualny stan sesji:</span>
+            <span th:text="${votingSession.sessionState} ?: 'Nie ustawione'"></span>
         </div>
-        <div th:if="${votingSession.question != null} ?: 'No question set'"
+        <div th:if="${votingSession.question != null} ?: 'Brak ustawionego pytania'"
              th:with="question=${votingSession.question}">
             <div>
-                <span>Question Id:</span>
-                <span th:text="${question.id} ?: 'Not set'"></span>
-                <span th:text="${question.content} ?: 'Not set'"></span>
+                <span>ID pytania:</span>
+                <span th:text="${question.id} ?: 'Nie ustawione'"></span>
+                <span th:text="${question.content} ?: 'Nie ustawione'"></span>
             </div>
             <div th:each="answer : ${question.answers}">
                 <div>
-                    <span>Answer id:</span>
-                    <span th:text="${answer.id} ?: 'Not set'"></span>
-                    <span th:text="${answer.content} ?: 'Not set'"></span>
+                    <span>ID odpowiedzi:</span>
+                    <span th:text="${answer.id} ?: 'Nie ustawione'"></span>
+                    <span th:text="${answer.content} ?: 'Nie ustawione'"></span>
                 </div>
             </div>
         </div>
@@ -103,23 +103,21 @@ Sens                    'rgb(98,206,40)',
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).CLOSED}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).OPEN}">Open voting session
+                            th:value="${T(com.mherda.livequiz.session.SessionState).OPEN}">Otwórz sesję
                     </button>
                 </form>
             </div>
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).OPEN}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">Close voting
-                        session
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">Zamknij sesję
                     </button>
                 </form>
             </div>
             <div th:if="${votingSession.sessionState == T(com.mherda.livequiz.session.SessionState).FINISHED_RESULTS}">
                 <form method="POST" th:action="@{/sessions/{path}/status(path=${votingSession.id})}">
                     <button type="submit" th:name="sessionState"
-                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_CLOSED}">Archive voting
-                        session
+                            th:value="${T(com.mherda.livequiz.session.SessionState).FINISHED_CLOSED}">Archiwizuj sesję
                     </button>
                 </form>
             </div>

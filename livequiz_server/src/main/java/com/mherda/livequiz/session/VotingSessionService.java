@@ -28,6 +28,8 @@ public class VotingSessionService {
     private final VotingSessionRepository votingSessionRepository;
     private final QuestionRepository questionRepository;
 
+    private static String NO_SESSION_OPEN = "Żadna sesja nie jest aktualnie otwarta!";
+
     public VotingSessionHealthCheck getCurrentVotingSessionHealthCheck() {
         var session = VotingSessionMapper.toDto(getCurrentSession());
         return new VotingSessionHealthCheck(session.id(), session.startDate(), session.endDate(), session.sessionState());
@@ -35,7 +37,7 @@ public class VotingSessionService {
 
     public VotingSessionResponse changeStatus(Long id, SessionState status) {
         var session = votingSessionRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("Session with id [%d] not found!", id)));
+                .orElseThrow(() -> new NoSuchElementException(String.format("Nie znaleziono sesji z ID: [%d]!", id)));
         session.setSessionState(status);
         switch (status) {
             case OPEN -> session.setStartDate(LocalDateTime.now());
@@ -49,7 +51,7 @@ public class VotingSessionService {
     public VotingSessionResponse addVotes(List<Long> chosenIds) {
         var currentSession = getCurrentSession();
         if (!currentSession.getSessionState().equals(SessionState.OPEN))
-            throw new NoOpenSessionException("No voting session currently open");
+            throw new NoOpenSessionException(NO_SESSION_OPEN);
 
         var availableAnswers = currentSession.getQuestion().getAvailableAnswers();
 
@@ -59,7 +61,7 @@ public class VotingSessionService {
                         .noneMatch(answerId -> answerId.equals(id)))
                 .findAny()
                 .ifPresent(id -> {
-                    throw new NoSuchAnswerException(String.format("No answer with id:[%d]", id));
+                    throw new NoSuchAnswerException(String.format("Brak odpowiedzi o ID: [%d]", id));
                 });
 
         var vote = Vote.builder()
@@ -82,7 +84,7 @@ public class VotingSessionService {
 
     public VotingSession createNew(Long questionId) {
         var question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new NoSuchElementException(String.format("Question with id: [%d] doesn't exist", questionId)));
+                .orElseThrow(() -> new NoSuchElementException(String.format("Pytanie z ID: [%d] nie istnieje", questionId)));
 
         var votingSession = VotingSession.builder()
                 .sessionState(SessionState.CLOSED)
@@ -98,7 +100,7 @@ public class VotingSessionService {
         return votingSessionRepository.findAll().stream()
                 .filter(session -> List.of(SessionState.CLOSED, SessionState.OPEN, SessionState.FINISHED_RESULTS).contains(session.getSessionState()))
                 .findFirst()
-                .orElseThrow(() -> new NoOpenSessionException("No voting session currently open"));
+                .orElseThrow(() -> new NoOpenSessionException(NO_SESSION_OPEN));
     }
 
 }

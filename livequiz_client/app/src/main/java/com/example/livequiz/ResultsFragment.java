@@ -103,7 +103,8 @@ public class ResultsFragment extends Fragment {
             String answerText = answer.getContent() + " : " + dto.getResult().get(answer.getId());
 
             if (dto.getSessionState().equals(SessionState.FINISHED_RESULTS))
-                answerText  = answerText + (answer.isCorrect() ? getString(R.string.correct) : getString(R.string.incorrect));
+                answerText  = answerText + " " +
+                        (answer.isCorrect() ? getString(R.string.correct) : getString(R.string.incorrect));
             answerTextView.setText(answerText);
             answerTextView.setTextSize(20);
 
