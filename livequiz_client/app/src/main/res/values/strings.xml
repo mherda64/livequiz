@@ -12,4 +12,6 @@
     <string name="title_activity_question_answer">QuestionAnswer</string>
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="correct">\u2713</string>
+    <string name="incorrect">\u2717</string>
 </resources>

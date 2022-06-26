@@ -9,9 +9,6 @@
         android:id="@+id/joinFragment"
         android:name="com.example.livequiz.JoinFragment"
         android:label="JoinFragment">
-        <argument
-            android:name="votingSessionDto"
-            app:argType="com.example.livequiz.session.dto.VotingSessionDTO" />
         <action
             android:id="@+id/action_joinFragment_to_questionAnswerFragment"
             app:destination="@id/questionAnswerFragment"
@@ -46,6 +43,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/joinFragment" />
+        <action
+            android:id="@+id/action_questionAnswerFragment_to_joinFragment"
+            app:destination="@id/joinFragment" />
     </fragment>
     <fragment
         android:id="@+id/resultsFragment"
@@ -55,5 +55,9 @@
         <argument
             android:name="votingSessionDto"
             app:argType="com.example.livequiz.session.dto.VotingSessionDTO" />
+        <action
+            android:id="@+id/action_resultsFragment_to_joinFragment"
+            app:destination="@id/joinFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 </navigation>

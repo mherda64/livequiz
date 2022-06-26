@@ -37,10 +37,6 @@ public class VotingSessionService {
         return votingSessionAPI.getCurrentVotingSession();
     }
 
-    public Call<VotingSessionDTO> getCurrentVotingSessionHealthCheck() {
-        return votingSessionAPI.getCurrentVotingSessionHealthCheck();
-    }
-    
     public Call<VotingSessionDTO> sendVote(List<Long> chosenIds) {
         return votingSessionAPI.sendVote(chosenIds);
     }

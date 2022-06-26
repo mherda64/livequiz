@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.livequiz.answer.AnswerDTO;
+import com.example.livequiz.request.Mapper;
+import com.example.livequiz.session.SessionState;
 import com.example.livequiz.session.VotingSessionService;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 
@@ -31,9 +35,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.reactivex.Flowable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class QuestionAnswerFragment extends Fragment {
 
@@ -78,6 +84,8 @@ public class QuestionAnswerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_question_answer, container, false);
+
+        subscribeOnSocket();
 
         tv_questionId = view.findViewById(R.id.tv_questionId);
         tv_questionContent = view.findViewById(R.id.tv_questionContent);
@@ -137,5 +145,18 @@ public class QuestionAnswerFragment extends Fragment {
 
         }
         return view;
+    }
+
+    private void subscribeOnSocket() {
+        Flowable<StompMessage> socketFlowable = quizApplication.getStompMessageFlowable();
+        socketFlowable.subscribe(message -> {
+            votingSessionDTO = Mapper.get().readValue(message.getPayload(), VotingSessionDTO.class);
+            if (SessionState.shouldDisconnect(votingSessionDTO.getSessionState())) {
+                new Handler(Looper.getMainLooper()).post(() ->
+                        NavHostFragment.findNavController(this)
+                                .navigate(QuestionAnswerFragmentDirections.actionQuestionAnswerFragmentToJoinFragment()));
+
+            }
+        });
     }
 }

@@ -27,6 +27,7 @@ import com.example.livequiz.session.SessionState;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 import com.example.livequiz.session.VotingSessionService;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Function;
@@ -92,7 +93,11 @@ public class JoinFragment extends Fragment {
                 @Override
                 public void onResponse(Call<VotingSessionDTO> call, Response<VotingSessionDTO> response) {
                     if (!response.isSuccessful()) {
-                        Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
+                        try {
+                            Toast.makeText(getActivity(), "ERROR: " + response.errorBody().string(), Toast.LENGTH_LONG).show();
+                        } catch (IOException e) {
+                            Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
+                        }
                         return;
                     }
                     votingSession = response.body();
@@ -106,7 +111,8 @@ public class JoinFragment extends Fragment {
                         if (votingSession.getSessionState() != null) {
                             tv_sessionState.setText(getString(R.string.session) + votingSession.getSessionState().toString());
                         }
-                        btn_join.setEnabled(votingSession.getSessionState() == null || votingSession.getSessionState().equals(SessionState.OPEN));
+                        btn_join.setEnabled(votingSession.getSessionState() != null &&
+                                SessionState.canConnect(votingSession.getSessionState()));
                     }
                 }
 
@@ -122,11 +128,11 @@ public class JoinFragment extends Fragment {
 
         btn_join.setOnClickListener(v -> {
             if (btn_join.isEnabled()) {
-
                 quizApplication.socketConnect(et_baseAddress.getText().toString());
 
                 NavController navController = NavHostFragment.findNavController(this);
-                if (quizApplication.hasAlreadyVoted(votingSession.getId())) {
+                if (quizApplication.hasAlreadyVoted(votingSession.getId()) ||
+                        votingSession.getSessionState().equals(SessionState.FINISHED_RESULTS)) {
                     navController.navigate(JoinFragmentDirections.actionJoinFragmentToResultsFragment(votingSession));
                 } else {
                     quizApplication.setDestAddress(et_baseAddress.getText().toString());

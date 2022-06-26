@@ -11,9 +11,6 @@ import retrofit2.http.POST;
 
 public interface VotingSessionAPI {
 
-    @GET("sessions/current/healthcheck")
-    Call<VotingSessionDTO> getCurrentVotingSessionHealthCheck();
-
     @GET("sessions/current")
     Call<VotingSessionDTO> getCurrentVotingSession();
 
