@@ -1,6 +1,5 @@
 package com.mherda.livequiz.question;
 
-import com.mherda.livequiz.answer.Answer;
 import com.mherda.livequiz.answer.AnswerMapper;
 import com.mherda.livequiz.question.dto.QuestionResponse;
 import lombok.AccessLevel;

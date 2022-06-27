@@ -1,9 +1,6 @@
 package com.example.livequiz;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Application;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +15,7 @@ public class QuizApplication extends Application {
     private StompClient stompClient;
     private QuizApplication quizApplication;
 
-    private List<Long> alreadyVotedIds = new ArrayList<>();
-    private String destAddress;
+    private final List<Long> alreadyVotedIds = new ArrayList<>();
     private Flowable<StompMessage> stompMessageFlowable;
 
     public QuizApplication getInstance() {
@@ -38,10 +34,6 @@ public class QuizApplication extends Application {
 
     public void addVote(Long id) {
         alreadyVotedIds.add(id);
-    }
-
-    public void setDestAddress(String destAddress) {
-        this.destAddress = destAddress;
     }
 
     public void socketConnect(String destAddress) {
@@ -69,7 +61,6 @@ public class QuizApplication extends Application {
             parsed = parsed + "/";
         return "ws://" + parsed;
     }
-
 
 
 }

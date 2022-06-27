@@ -17,3 +17,12 @@ body {
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
+
+.question {
+    padding: 10px;
+}
+
+.image {
+    max-height: 400px;
+    max-width: 400px;
+}

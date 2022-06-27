@@ -53,6 +53,9 @@
         android:label="fragment_results"
         tools:layout="@layout/fragment_results">
         <argument
+            android:name="destAddress"
+            app:argType="string" />
+        <argument
             android:name="votingSessionDto"
             app:argType="com.example.livequiz.session.dto.VotingSessionDTO" />
         <action

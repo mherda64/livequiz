@@ -25,6 +25,11 @@
             android:text="@string/questionContent"
             android:textSize="24sp" />
 
+        <ImageView
+            android:id="@+id/resultsImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <LinearLayout
             android:id="@+id/answerLayoutResult"
             android:layout_width="match_parent"

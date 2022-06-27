@@ -2,7 +2,6 @@ package com.mherda.livequiz.admin;
 
 import com.mherda.livequiz.exception.NoOpenSessionException;
 import com.mherda.livequiz.exception.SessionAlreadyOpenedException;
-import com.mherda.livequiz.question.Question;
 import com.mherda.livequiz.question.QuestionService;
 import com.mherda.livequiz.session.SessionState;
 import com.mherda.livequiz.session.VotingSessionMapper;

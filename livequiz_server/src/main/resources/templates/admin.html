@@ -38,10 +38,10 @@
 <div id="main-content">
 
     <div th:if="${votingSession == null}">
-        <p>Brak otwartej sesji, utwórz jakąś!</p>
+        <p>Brak otwartej sesji, wybierz pytanie aby utworzyć nową!</p>
         <div>
             <h3>Pytania</h3>
-            <div th:each="question: ${questions}">
+            <div class="question" th:each="question: ${questions}">
                 <div>
                     <span>Id:</span>
                     <span th:text="${question.id}"></span>
@@ -84,8 +84,9 @@
             <span>Aktualny stan sesji:</span>
             <span th:text="${votingSession.sessionState} ?: 'Nie ustawione'"></span>
         </div>
-        <div th:if="${votingSession.question != null} ?: 'Brak ustawionego pytania'"
+        <div class="question" th:if="${votingSession.question != null} ?: 'Brak ustawionego pytania'"
              th:with="question=${votingSession.question}">
+            <img class="image" th:src="@{${'/img/' + question.id + '.png'}}"/>
             <div>
                 <span>ID pytania:</span>
                 <span th:text="${question.id} ?: 'Nie ustawione'"></span>

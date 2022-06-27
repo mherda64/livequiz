@@ -8,5 +8,4 @@ public record QuestionResponse(
         Long id,
         String content,
         List<AnswerResponse> answers
-) {
-}
+) {}

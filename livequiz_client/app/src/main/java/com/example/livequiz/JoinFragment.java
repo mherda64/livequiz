@@ -1,17 +1,10 @@
 package com.example.livequiz;
 
-import static android.content.ContentValues.TAG;
-
-import static com.example.livequiz.Constants.DEST_ADDRESS;
-import static com.example.livequiz.Constants.VOTING_SESSION_DTO;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,23 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.livequiz.answer.AnswerDTO;
-import com.example.livequiz.request.Mapper;
 import com.example.livequiz.session.SessionState;
 import com.example.livequiz.session.dto.VotingSessionDTO;
 import com.example.livequiz.session.VotingSessionService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import io.reactivex.Flowable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ua.naiksoftware.stomp.dto.StompMessage;
 
 public class JoinFragment extends Fragment {
 
@@ -103,10 +89,12 @@ public class JoinFragment extends Fragment {
                     votingSession = response.body();
                     if (votingSession != null) {
                         if (votingSession.getStartDate() != null) {
-                            tv_startDate.setText(getString(R.string.startDate) + votingSession.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                            tv_startDate.setText(getString(R.string.startDate) + votingSession.getStartDate()
+                                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                         }
                         if (votingSession.getEndDate() != null) {
-                            tv_endDate.setText(getString(R.string.endDate) + votingSession.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+                            tv_endDate.setText(getString(R.string.endDate) + votingSession.getStartDate()
+                                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
                         }
                         if (votingSession.getSessionState() != null) {
                             tv_sessionState.setText(getString(R.string.session) + votingSession.getSessionState().toString());
@@ -133,9 +121,9 @@ public class JoinFragment extends Fragment {
                 NavController navController = NavHostFragment.findNavController(this);
                 if (quizApplication.hasAlreadyVoted(votingSession.getId()) ||
                         votingSession.getSessionState().equals(SessionState.FINISHED_RESULTS)) {
-                    navController.navigate(JoinFragmentDirections.actionJoinFragmentToResultsFragment(votingSession));
+                    navController.navigate(JoinFragmentDirections
+                            .actionJoinFragmentToResultsFragment(String.valueOf(et_baseAddress.getText()), votingSession));
                 } else {
-                    quizApplication.setDestAddress(et_baseAddress.getText().toString());
                     JoinFragmentDirections.ActionJoinFragmentToQuestionAnswerFragment action =
                             JoinFragmentDirections.actionJoinFragmentToQuestionAnswerFragment(
                                     String.valueOf(et_baseAddress.getText()),
