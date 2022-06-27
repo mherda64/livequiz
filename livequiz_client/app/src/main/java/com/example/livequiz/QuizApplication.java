@@ -14,6 +14,7 @@ public class QuizApplication extends Application {
 
     private StompClient stompClient;
     private QuizApplication quizApplication;
+    private String destAddress;
 
     private final List<Long> alreadyVotedIds = new ArrayList<>();
     private Flowable<StompMessage> stompMessageFlowable;
@@ -62,5 +63,11 @@ public class QuizApplication extends Application {
         return "ws://" + parsed;
     }
 
+    public String getDestAddress() {
+        return destAddress;
+    }
 
+    public void setDestAddress(String destAddress) {
+        this.destAddress = destAddress;
+    }
 }

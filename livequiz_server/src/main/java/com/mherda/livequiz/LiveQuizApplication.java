@@ -48,7 +48,7 @@ class MyRunner implements CommandLineRunner {
                 Pair.of("Żadne z powyższych", false)
         ));
         var second = generateAndPersistQuestion("Project Valhalla zakłada dodanie do Javy:", "2.png", List.of(
-                Pair.of("Typów prymitywnych deifniowanych przez programistę", true),
+                Pair.of("Typów prymitywnych definiowanych przez programistę", true),
                 Pair.of("Automatyczne generowanie geterów i seterów", false),
                 Pair.of("Kompilację kodu bajtowego Javy do kodu natywnego", false)
         ));

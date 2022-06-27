@@ -135,7 +135,7 @@ public class ResultsFragment extends Fragment {
         for (int i = 0; i < answers.size(); i++) {
             AnswerDTO answer = answers.get(i);
             TextView answerTextView = new TextView(getActivity());
-            String answerText = answer.getContent() + " : " + dto.getResult().get(answer.getId());
+            String answerText = "-" + answer.getContent() + " : " + dto.getResult().get(answer.getId());
 
             if (dto.getSessionState().equals(SessionState.FINISHED_RESULTS))
                 answerText = answerText + " " +
@@ -152,7 +152,6 @@ public class ResultsFragment extends Fragment {
 
         PieDataSet pieDataSet = new PieDataSet(entrySet, getString(R.string.questionContent));
         pieDataSet.setColors(colors);
-        pieDataSet.setValueTextSize(12f);
         pieDataSet.setValueTextColor(Color.WHITE);
         PieData pieData = new PieData(pieDataSet);
         pieData.setDrawValues(true);

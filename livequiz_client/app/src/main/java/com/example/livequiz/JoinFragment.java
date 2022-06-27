@@ -63,6 +63,9 @@ public class JoinFragment extends Fragment {
         quizApplication.socketDisconnect();
         votingSessionService = new VotingSessionService(et_baseAddress.getText().toString());
 
+        if (quizApplication.getDestAddress() != null)
+            et_baseAddress.setText(quizApplication.getDestAddress());
+
         btn_updateVotingSession.setOnClickListener(v -> {
 
             if (!et_baseAddress.getText().toString().matches(URL_REGEX)) {
@@ -116,6 +119,7 @@ public class JoinFragment extends Fragment {
 
         btn_join.setOnClickListener(v -> {
             if (btn_join.isEnabled()) {
+                quizApplication.setDestAddress(et_baseAddress.getText().toString());
                 quizApplication.socketConnect(et_baseAddress.getText().toString());
 
                 NavController navController = NavHostFragment.findNavController(this);
