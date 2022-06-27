@@ -1,7 +1,16 @@
 package com.example.livequiz;
 
 import android.app.Application;
+import android.content.Context;
 
+import com.example.livequiz.request.Mapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +25,7 @@ public class QuizApplication extends Application {
     private QuizApplication quizApplication;
     private String destAddress;
 
-    private final List<Long> alreadyVotedIds = new ArrayList<>();
+    private List<Long> alreadyVotedIds = new ArrayList<>();
     private Flowable<StompMessage> stompMessageFlowable;
 
     public QuizApplication getInstance() {
@@ -27,6 +36,7 @@ public class QuizApplication extends Application {
     public void onCreate() {
         super.onCreate();
         quizApplication = this;
+        loadVotedIds();
     }
 
     public boolean hasAlreadyVoted(Long id) {
@@ -35,6 +45,31 @@ public class QuizApplication extends Application {
 
     public void addVote(Long id) {
         alreadyVotedIds.add(id);
+
+        try {
+            FileOutputStream fOut = openFileOutput("votedIds.txt", Context.MODE_PRIVATE);
+            fOut.write(Mapper.get().writeValueAsString(alreadyVotedIds).getBytes());
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadVotedIds() {
+        try {
+            FileInputStream fIn = openFileInput("votedIds.txt");
+            InputStreamReader isr = new InputStreamReader(fIn);
+            BufferedReader bf = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bf.readLine()) != null) {
+                sb.append(line);
+            }
+            isr.close();
+            alreadyVotedIds = Mapper.get().readValue(sb.toString(), new TypeReference<List<Long>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void socketConnect(String destAddress) {

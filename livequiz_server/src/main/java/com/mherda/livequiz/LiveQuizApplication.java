@@ -45,6 +45,7 @@ class MyRunner implements CommandLineRunner {
                 Pair.of("Typy prymitywne", false),
                 Pair.of("Klasy", true),
                 Pair.of("Typy wyliczeniowe", false),
+                Pair.of("Typy złożone", true),
                 Pair.of("Żadne z powyższych", false)
         ));
         var second = generateAndPersistQuestion("Project Valhalla zakłada dodanie do Javy:", "2.png", List.of(

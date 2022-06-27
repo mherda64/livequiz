@@ -90,6 +90,9 @@
             <div>
                 <span>ID pytania:</span>
                 <span th:text="${question.id} ?: 'Nie ustawione'"></span>
+            </div>
+            <div>
+                <span>Pytanie:</span>
                 <span th:text="${question.content} ?: 'Nie ustawione'"></span>
             </div>
             <div th:each="answer : ${question.answers}">
