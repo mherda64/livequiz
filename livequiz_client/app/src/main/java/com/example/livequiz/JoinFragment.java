@@ -87,6 +87,8 @@ public class JoinFragment extends Fragment {
                         } catch (IOException e) {
                             Toast.makeText(getActivity(), "ERROR: " + response.code() + response.message(), Toast.LENGTH_LONG).show();
                         }
+                        tv_sessionState.setText(getString(R.string.session));
+                        btn_join.setEnabled(false);
                         return;
                     }
                     votingSession = response.body();
